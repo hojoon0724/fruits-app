@@ -102,17 +102,71 @@ app.get("/fruits", async (req, res) => {
     res.status(400).send("error, read logs for details");
   }
 });
+
 // New
+app.get("/fruits/new", (req, res) => {
+  res.render("fruits/new.ejs");
+});
 
 // Delete
+app.delete("/fruits/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Fruit.findByIdAndDelete(id);
+    res.redirect("/fruits");
+  } catch (error) {
+    console.log("=====", error.message, "====");
+    res.status(400).send("yo, error. check out the log");
+  }
+});
 
 // Update
+app.put("/fruits/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    req.body.readyToEat = req.body.readyToEat === "on" ? true : false;
+    await Fruit.findByIdAndUpdate(id, req.body);
+    res.redirect(`/fruits/${id}`);
+  } catch (error) {
+    console.log("=====", error.message, "====");
+    res.status(400).send("yo, error. check out the log");
+  }
+});
 
 // Create
+app.post("/fruits", async (req, res) => {
+  try {
+    // check if readyToEat should be true
+    // expression ? true : false (ternary operator)
+    req.body.readyToEat = req.body.readyToEat === "on" ? true : false;
+
+    // create the fruit in the database
+    await Fruit.create(req.body);
+    res.redirect("/fruits");
+  } catch (error) {
+    console.log("=====", error.message, "====");
+    res.status(400).send("yo, error. check out the log");
+  }
+});
 
 // Edit
+app.get("/fruits/:id/edit", async (req, res) => {
+  try {
+    //get the id from params
+    const id = req.params.id;
+    // get the fruit from the DB
+    const fruit = await Fruit.findById(id);
+    // render the template
+    res.render("fruits/edit.ejs", { fruit });
+  } catch (error) {
+    console.log("=====", error.message, "====");
+    res.status(400).send("yo, error. check out the log");
+  }
+});
 
 // Show - get to /fruits/:id
+// ALWAYS PUT THE SHOW ROUTE AT THE END
+// Otherwise "/new" could be taken as an ID
 app.get("/fruits/:id", async (req, res) => {
   try {
     // get the id from params
