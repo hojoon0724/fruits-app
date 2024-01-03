@@ -28,6 +28,25 @@ mongoose.connection
   });
 
 // -----------------------------------------------------
+// Create Fruits Model
+// -----------------------------------------------------
+// Destructure Schema and model into their own variables
+const { Schema, model } = mongoose;
+// ^ same as
+// const Schema = mongoose.Schema
+// const model = mongoose.model
+
+// schema = the shape of the data
+const fruitSchema = new Schema({
+  name: String,
+  color: String,
+  readyToEat: Boolean,
+});
+
+// model - object for interacting with the database
+const Fruit = model("Fruit", fruitSchema);
+
+// -----------------------------------------------------
 // Application Object
 // -----------------------------------------------------
 const app = express();
@@ -37,13 +56,52 @@ const { PORT = 3013 } = process.env;
 // Middleware
 // -----------------------------------------------------
 app.use(morgan("dev"));
-app.use(methodOverride("_method"));
+app.use(methodOverride("_method")); // override form submissions
+app.use(express.urlencoded({ extended: true })); // allows us to parse urlencoded bodies (forms are urlencoded)
+app.use(express.static("public")); // serves files from the public folder
 
 // -----------------------------------------------------
 // Routes INDUCESS
 // -----------------------------------------------------
-// Index
+// Seed -- puts some data for starter info - reset the data to continue testing
+app.get("/fruits/seed", async (req, res) => {
+  try {
+    // array of all fruits
+    const startFruits = [
+      { name: "Orange", color: "orange", readyToEat: false },
+      { name: "Grape", color: "purple", readyToEat: false },
+      { name: "Banana", color: "orange", readyToEat: false },
+      { name: "Strawberry", color: "red", readyToEat: false },
+      { name: "Coconut", color: "brown", readyToEat: false },
+    ];
 
+    // delete all fruits
+    await Fruit.deleteMany({});
+
+    // seed my starter fruits
+    const fruits = await Fruit.create(startFruits);
+
+    // send fruits as response
+    res.json(fruits);
+  } catch (error) {
+    console.log(error.message);
+    res.send("there was an error yo");
+  }
+});
+
+// Index
+app.get("/fruits", async (req, res) => {
+  try {
+    // get all fruits
+    const fruits = await Fruit.find({});
+    // render a template
+    // fruits/index.ejs = ./views/fruits/index.ejs
+    res.render("fruits/index.ejs", { fruits });
+  } catch (error) {
+    console.log("-----", error.message, "------");
+    res.status(400).send("error, read logs for details");
+  }
+});
 // New
 
 // Delete
@@ -54,9 +112,22 @@ app.use(methodOverride("_method"));
 
 // Edit
 
-// Seed
+// Show - get to /fruits/:id
+app.get("/fruits/:id", async (req, res) => {
+  try {
+    // get the id from params
+    const id = req.params.id;
 
-// Show
+    // find the fruit from the DB
+    const fruit = await Fruit.findById(id);
+
+    // render the template with the fruit
+    res.render("fruits/show.ejs", { fruit });
+  } catch (error) {
+    console.log("=====", error.message, "====");
+    res.status(400).send("yo, error. check out the log");
+  }
+});
 
 // -----------------------------------------------------
 // GET requests
