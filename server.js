@@ -6,10 +6,13 @@ const express = require("express"); // web framework
 const morgan = require("morgan"); // logger
 const methodOverride = require("method-override"); // override forms
 const mongoose = require("mongoose"); // connect to our mongodb
-
+const Fruit = require("./models/Fruit");
 // -----------------------------------------------------
 // Database connection
 // -----------------------------------------------------
+/* 
+?-----------------------------------------------------
+? moved to models/connection.js
 const DATABASE_URL = process.env.DATABASE_URL; // "process" is what's going on in terminal, it just exists
 
 // Establish connection
@@ -27,9 +30,15 @@ mongoose.connection
     console.log(error);
   });
 
+?----------------------------------------------------- 
+*/
+
 // -----------------------------------------------------
 // Create Fruits Model
 // -----------------------------------------------------
+/* 
+?----------------------------------------------------- 
+? moved to models/Fruit.js
 // Destructure Schema and model into their own variables
 const { Schema, model } = mongoose;
 // ^ same as
@@ -45,7 +54,8 @@ const fruitSchema = new Schema({
 
 // model - object for interacting with the database
 const Fruit = model("Fruit", fruitSchema);
-
+?----------------------------------------------------- 
+*/
 // -----------------------------------------------------
 // Application Object
 // -----------------------------------------------------
