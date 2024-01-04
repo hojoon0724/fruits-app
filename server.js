@@ -11,6 +11,11 @@ const methodOverride = require("method-override"); // override forms
 // const Fruit = require("./models/Fruit");
 
 const fruitController = require("./controllers/fruit");
+const userController = require("./controllers/user");
+
+// lets you store the sessions somewhere
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 // -----------------------------------------------------
 // Database connection
@@ -75,8 +80,22 @@ app.use(morgan("dev"));
 app.use(methodOverride("_method")); // override form submissions
 app.use(express.urlencoded({ extended: true })); // allows us to parse urlencoded bodies (forms are urlencoded)
 app.use(express.static("public")); // serves files from the public folder
+app.use(
+  session({
+    secret: process.env.SECRET,
+    store: MongoStore.create({ mongoUrl: process.env.DATABASE_URL }),
+    saveUninitialized: true,
+    resave: false,
+  })
+);
+
+// -----------------------------------------------------
+// Routers
+// -----------------------------------------------------
+
 app.use("/fruits", fruitController);
 //-------^ only use when the URL starts with this
+app.use("/user", userController);
 
 // -----------------------------------------------------
 // Routes INDUCESS
