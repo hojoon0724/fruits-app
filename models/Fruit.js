@@ -10,6 +10,7 @@ const fruitSchema = new Schema({
   name: String,
   color: String,
   readyToEat: Boolean,
+  username: String,
 });
 
 // model - object for interacting with the database

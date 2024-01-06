@@ -5,12 +5,14 @@
     <%- include("../partials/header.ejs") %>
 
     <main>
+      <a href="/fruits/new"><button>Create a Fruit</button></a>
       <div>
-        <a href="/fruits/new"><button>Create a Fruit</button></a>
         <% for (let fruit of fruits) { %>
 
         <article>
-          <a href="/fruits/<%= fruit._id %>"> <h2><%= fruit.name %> - <%= fruit.readyToEat ? "ripe" : "not ripe"%></h2></a>
+          <h2 hx-get="/fruits/<%= fruit._id %>" hx-trigger="click" hx-target="div" hx-swap="outerHTML" hx-select="article"><%= fruit.name %> - <%= fruit.readyToEat ? "ripe" : "not ripe"%></h2>
+          <!-- hx-target: where to replace it -->
+          <!-- hx-select: what to replace it -->
         </article>
 
         <% } %>
