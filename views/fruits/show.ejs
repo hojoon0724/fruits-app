@@ -11,7 +11,9 @@
           <h2><%= fruit.name %> - <%= fruit.readyToEat ? "ripe" : "not ripe"%></h2>
           <h3><%= fruit.color %></h3>
 
+          <!-- this toggles the showTools value back and forth -- lets you do it w/o JS -->
           <button x-on:click="showTools = !showTools">Show Options</button>
+
           <div x-show="showTools">
             <a href="/fruits/<%= fruit._id %>/edit"><button>Edit</button></a>
             <form action="/fruits/<%= fruit._id %>?_method=DELETE" method="post">

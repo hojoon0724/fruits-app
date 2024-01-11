@@ -3,6 +3,11 @@
 // -----------------------------------------------------
 require("dotenv").config();
 const express = require("express"); // web framework
+const registerGlobalMiddleware = require("./utils/middleware");
+const registerRouters = require("./utils/routers");
+
+/*
+? Don't need them bc they're greyed out
 const morgan = require("morgan"); // logger
 const methodOverride = require("method-override"); // override forms
 
@@ -16,6 +21,7 @@ const userController = require("./controllers/user");
 // lets you store the sessions somewhere
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+*/
 
 // -----------------------------------------------------
 // Database connection
@@ -30,15 +36,15 @@ mongoose.connect(DATABASE_URL);
 
 // Connection events that triggers depending on mongo's status
 mongoose.connection
-  .on("open", () => {
-    console.log("connected to mongo");
-  })
-  .on("close", () => {
-    console.log("disconnected from mongo");
-  })
-  .on("error", (error) => {
-    console.log(error);
-  });
+.on("open", () => {
+  console.log("connected to mongo");
+})
+.on("close", () => {
+  console.log("disconnected from mongo");
+})
+.on("error", (error) => {
+  console.log(error);
+});
 
 ?----------------------------------------------------- 
 */
@@ -73,9 +79,18 @@ const Fruit = model("Fruit", fruitSchema);
 const app = express();
 const { PORT = 3013 } = process.env;
 
+// Register Middlewares
+registerGlobalMiddleware(app);
+
+// Register Routers
+registerRouters(app);
+
 // -----------------------------------------------------
 // Middleware
 // -----------------------------------------------------
+/*
+?----------------------------------------------------- 
+? moved to middleware.js
 app.use(morgan("dev"));
 app.use(methodOverride("_method")); // override form submissions
 app.use(express.urlencoded({ extended: true })); // allows us to parse urlencoded bodies (forms are urlencoded)
@@ -87,16 +102,21 @@ app.use(
     saveUninitialized: true,
     resave: false,
   })
-);
+  );
+  ?----------------------------------------------------- 
+  */
 
 // -----------------------------------------------------
 // Routers
 // -----------------------------------------------------
-
-app.use("/fruits", fruitController);
-//-------^ only use when the URL starts with this
-app.use("/user", userController);
-
+/*
+ ?----------------------------------------------------- 
+ ? moved to middleware.js
+ app.use("/fruits", fruitController);
+ //-------^ only use when the URL starts with this
+ app.use("/user", userController);
+ ?----------------------------------------------------- 
+*/
 // -----------------------------------------------------
 // Routes INDUCESS
 // -----------------------------------------------------
